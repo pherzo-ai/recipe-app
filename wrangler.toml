@@ -1,10 +1,10 @@
 name = "recipe-app"
-main = "src/index.js"
+main = ".open-next/worker.js"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 [assets]
-directory = "./public"
+directory = ".open-next/assets"
 binding = "ASSETS"
 
 # ─── KV namespace for saved recipes ──────────────────────────────────────────

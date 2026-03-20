@@ -11,16 +11,16 @@
   --carbon-black:   #212529ff;
 
   /* Semantic aliases */
-  --bg:          var(--bright-snow);
-  --bg-card:     #ffffff;
-  --text-primary:   var(--carbon-black);
-  --text-secondary: var(--slate-grey);
-  --text-muted:     var(--pale-slate-2);
-  --border:         var(--alabaster-grey);
-  --border-input:   var(--pale-slate);
-  --btn-primary-bg: var(--carbon-black);
+  --bg:                var(--bright-snow);
+  --bg-card:           #ffffff;
+  --text-primary:      var(--carbon-black);
+  --text-secondary:    var(--slate-grey);
+  --text-muted:        var(--pale-slate-2);
+  --border:            var(--alabaster-grey);
+  --border-input:      var(--pale-slate);
+  --btn-primary-bg:    var(--carbon-black);
   --btn-primary-hover: var(--gunmetal);
-  --nav-bg:         var(--carbon-black);
+  --nav-bg:            var(--carbon-black);
 }
 
 /* ── Reset & base ─────────────────────────────────────────────────────────── */
@@ -101,6 +101,9 @@ ul, ol { list-style: none; }
   align-items: center;
   gap: .4rem;
   transition: color .15s, background .15s;
+  cursor: pointer;
+  background: none;
+  border: none;
 }
 
 .nav-back:hover {

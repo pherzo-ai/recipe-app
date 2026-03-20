@@ -1,0 +1,6 @@
+{
+  "framework": "nextjs",
+  "version": "15",
+  "basePath": "/start",
+  "entry": ".open-next/worker.js"
+}

@@ -1,3 +1,13 @@
+# Next.js build output
+.next/
+.open-next/
+
+# Dependencies
 node_modules/
-data/recipes.json
-.env
+
+# Misc
+.DS_Store
+*.pem
+
+# Wrangler
+.wrangler/
