@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recipe — Mise</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body class="recipe-page">
 
   <!-- Navigation -->
   <nav class="nav" role="navigation">
     <div class="nav-inner">
-      <a href="index.html" class="nav-logo">
+      <a href="/" class="nav-logo">
         <span class="logo-icon">🍳</span>
         Mise
       </a>
       <div class="nav-links">
-        <a href="saved.html" class="nav-link">Saved Recipes</a>
+        <a href="/saved" class="nav-link">Saved Recipes</a>
       </div>
     </div>
   </nav>
@@ -228,7 +228,7 @@
               <p style="font-size:2rem;margin-bottom:1rem;">😕</p>
               <h2 style="margin-bottom:.5rem;">Recipe not found</h2>
               <p style="color:var(--text-secondary);margin-bottom:1.5rem;">${esc(err.message)}</p>
-              <a href="saved.html" class="btn btn-outline">← Back to Saved Recipes</a>
+              <a href="/saved" class="btn btn-outline">← Back to Saved Recipes</a>
             </div>`;
           document.getElementById('loadingOverlay').classList.remove('visible');
           saveBtn.style.display = 'none';
@@ -246,7 +246,7 @@
             const res = await fetch(`/api/saved/${encodeURIComponent(savedId)}`, { method: 'DELETE' });
             if (!res.ok) throw new Error('Could not remove recipe.');
             showToast('Recipe removed.', '');
-            setTimeout(() => { window.location.href = 'saved.html'; }, 1200);
+            setTimeout(() => { window.location.href = '/saved'; }, 1200);
           } catch (err) {
             showToast(err.message, 'error');
           }
@@ -255,13 +255,13 @@
         // Viewing a freshly scraped recipe from sessionStorage
         const stored = sessionStorage.getItem('currentRecipe');
         if (!stored) {
-          window.location.href = 'index.html';
+          window.location.href = '/';
           return;
         }
         try {
           currentRecipe = JSON.parse(stored);
         } catch {
-          window.location.href = 'index.html';
+          window.location.href = '/';
           return;
         }
         saveBtn.onclick = () => saveRecipe(currentRecipe);

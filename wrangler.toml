@@ -1,0 +1,19 @@
+name = "recipe-app"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+# ─── KV namespace for saved recipes ──────────────────────────────────────────
+# Before deploying, create a KV namespace and replace the ID below:
+#   wrangler kv namespace create RECIPES
+[[kv_namespaces]]
+binding = "RECIPES"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
+# ─── Secrets ──────────────────────────────────────────────────────────────────
+# Set your Anthropic API key as a secret (never commit it here):
+#   wrangler secret put ANTHROPIC_API_KEY

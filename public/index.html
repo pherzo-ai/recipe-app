@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mise — Clean Recipe Viewer</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
   <!-- Navigation -->
   <nav class="nav" role="navigation">
     <div class="nav-inner">
-      <a href="index.html" class="nav-logo">
+      <a href="/" class="nav-logo">
         <span class="logo-icon">🍳</span>
         Mise
       </a>
       <div class="nav-links">
-        <a href="saved.html" class="nav-link">Saved Recipes</a>
+        <a href="/saved" class="nav-link">Saved Recipes</a>
       </div>
     </div>
   </nav>
@@ -148,7 +148,7 @@
 
         // Store recipe in sessionStorage and navigate to viewer
         sessionStorage.setItem('currentRecipe', JSON.stringify(data.recipe));
-        window.location.href = 'recipe.html';
+        window.location.href = '/recipe';
       } catch (err) {
         showError(err.message || 'Could not load recipe. Please try again.');
         showToast('Failed to load recipe', 'error');

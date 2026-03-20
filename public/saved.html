@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Saved Recipes — Mise</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body class="saved-page">
 
   <!-- Navigation -->
   <nav class="nav" role="navigation">
     <div class="nav-inner">
-      <a href="index.html" class="nav-logo">
+      <a href="/" class="nav-logo">
         <span class="logo-icon">🍳</span>
         Mise
       </a>
       <div class="nav-links">
-        <a href="saved.html" class="nav-link active" aria-current="page">Saved Recipes</a>
+        <a href="/saved" class="nav-link active" aria-current="page">Saved Recipes</a>
       </div>
     </div>
   </nav>
@@ -27,7 +27,7 @@
       <h1 class="saved-title">Saved Recipes</h1>
       <p class="saved-count" id="savedCount"></p>
     </div>
-    <a href="index.html" class="btn btn-primary">+ Add Recipe</a>
+    <a href="/" class="btn btn-primary">+ Add Recipe</a>
   </div>
 
   <!-- Recipe grid -->
@@ -107,7 +107,7 @@
             <div class="empty-state-icon" aria-hidden="true">📭</div>
             <h2>No saved recipes yet</h2>
             <p>Head back to the home page, paste a recipe URL, and hit "Save Recipe" to build your collection.</p>
-            <a href="index.html" class="btn btn-primary">Find a Recipe</a>
+            <a href="/" class="btn btn-primary">Find a Recipe</a>
           </div>`;
         return;
       }
@@ -118,7 +118,7 @@
 
     /* ── Actions ────────────────────────────────────────────────────────── */
     function viewRecipe(id) {
-      window.location.href = `recipe.html?id=${encodeURIComponent(id)}`;
+      window.location.href = `/recipe?id=${encodeURIComponent(id)}`;
     }
 
     async function deleteRecipe(id, title) {
