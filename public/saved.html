@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saved Recipes — Mise</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="saved-page">
+
+  <!-- Navigation -->
+  <nav class="nav" role="navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">🍳</span>
+        Mise
+      </a>
+      <div class="nav-links">
+        <a href="saved.html" class="nav-link active" aria-current="page">Saved Recipes</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page header -->
+  <div class="saved-header" id="savedHeader">
+    <div>
+      <h1 class="saved-title">Saved Recipes</h1>
+      <p class="saved-count" id="savedCount"></p>
+    </div>
+    <a href="index.html" class="btn btn-primary">+ Add Recipe</a>
+  </div>
+
+  <!-- Recipe grid -->
+  <div id="recipesContainer">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p class="loading-text">Loading saved recipes…</p>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    let toastTimer;
+    function showToast(msg, type = '') {
+      clearTimeout(toastTimer);
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = 'toast show' + (type ? ' ' + type : '');
+      toastTimer = setTimeout(() => { el.className = 'toast'; }, 3500);
+    }
+
+    function esc(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '';
+      try {
+        return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(iso));
+      } catch { return ''; }
+    }
+
+    /* ── Render ─────────────────────────────────────────────────────────── */
+    function buildCard(recipe) {
+      const meta = [];
+      if (recipe.totalTime || recipe.cookTime) meta.push(`⏱ ${recipe.totalTime || recipe.cookTime}`);
+      if (recipe.servings) meta.push(`🍽 ${recipe.servings}`);
+
+      const thumbHtml = recipe.image
+        ? `<img src="${esc(recipe.image)}" alt="" class="card-thumb" loading="lazy" onerror="this.outerHTML='<div class=\\'card-thumb-placeholder\\'>🍴</div>'">`
+        : `<div class="card-thumb-placeholder" aria-hidden="true">🍴</div>`;
+
+      return `
+        <article class="recipe-card" data-id="${esc(recipe.id)}">
+          ${thumbHtml}
+          <div class="card-body">
+            <h2 class="card-title">${esc(recipe.title || 'Untitled Recipe')}</h2>
+            ${meta.length ? `<div class="card-meta">${meta.map(m => `<span>${esc(m)}</span>`).join('')}</div>` : ''}
+            ${recipe.savedAt ? `<p class="card-domain">Saved ${esc(formatDate(recipe.savedAt))}${recipe.domain ? ' · ' + esc(recipe.domain) : ''}</p>` : ''}
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="viewRecipe('${esc(recipe.id)}')">View</button>
+            <button class="btn btn-danger" onclick="deleteRecipe('${esc(recipe.id)}', '${esc(recipe.title)}')">Remove</button>
+          </div>
+        </article>`;
+    }
+
+    function renderRecipes(recipes) {
+      const container = document.getElementById('recipesContainer');
+      const countEl   = document.getElementById('savedCount');
+
+      if (!recipes.length) {
+        countEl.textContent = '';
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon" aria-hidden="true">📭</div>
+            <h2>No saved recipes yet</h2>
+            <p>Head back to the home page, paste a recipe URL, and hit "Save Recipe" to build your collection.</p>
+            <a href="index.html" class="btn btn-primary">Find a Recipe</a>
+          </div>`;
+        return;
+      }
+
+      countEl.textContent = `${recipes.length} recipe${recipes.length !== 1 ? 's' : ''}`;
+      container.innerHTML = `<div class="saved-grid">${recipes.map(buildCard).join('')}</div>`;
+    }
+
+    /* ── Actions ────────────────────────────────────────────────────────── */
+    function viewRecipe(id) {
+      window.location.href = `recipe.html?id=${encodeURIComponent(id)}`;
+    }
+
+    async function deleteRecipe(id, title) {
+      const confirmed = confirm(`Remove "${title || 'this recipe'}" from your saved recipes?`);
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`/api/saved/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Could not remove recipe.');
+        }
+
+        // Remove card from DOM without full reload
+        const card = document.querySelector(`.recipe-card[data-id="${id}"]`);
+        if (card) {
+          card.style.transition = 'opacity .25s, transform .25s';
+          card.style.opacity = '0';
+          card.style.transform = 'scale(.95)';
+          setTimeout(() => { card.remove(); refreshCount(); }, 260);
+        }
+        showToast('Recipe removed.', '');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function refreshCount() {
+      const remaining = document.querySelectorAll('.recipe-card').length;
+      const countEl = document.getElementById('savedCount');
+      if (remaining === 0) {
+        renderRecipes([]);
+      } else {
+        countEl.textContent = `${remaining} recipe${remaining !== 1 ? 's' : ''}`;
+      }
+    }
+
+    /* ── Init ───────────────────────────────────────────────────────────── */
+    async function init() {
+      document.getElementById('loadingOverlay').classList.add('visible');
+      try {
+        const res = await fetch('/api/saved');
+        if (!res.ok) throw new Error('Could not load saved recipes.');
+        const recipes = await res.json();
+        renderRecipes(recipes);
+      } catch (err) {
+        document.getElementById('recipesContainer').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <h2>Couldn't load recipes</h2>
+            <p>${esc(err.message)}</p>
+            <button class="btn btn-outline" onclick="init()">Try again</button>
+          </div>`;
+      } finally {
+        document.getElementById('loadingOverlay').classList.remove('visible');
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
